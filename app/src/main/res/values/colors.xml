@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--DEFAULT-->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--MY COLORS-->
+    <color name="myColorPrimary">#f44336</color>
+    <color name="myColorPrimaryDark">#e53935</color>
+    <color name="myColorAppBarLayout">#E53935</color>
+    <color name="myColorButtonScan">#B71C1C</color>
+    <color name="myColorButtonScanPressed">#dc0f0f</color>
+    <color name="myColorIcon">#BEBEBE</color>
+    <color name="myColorAccent">#F44336</color>
+    <color name="myColorTextFieldOutput">#525252</color>
+    <color name="myColorFooterLayout">#9E9E9E</color>
+    <color name="myColorButtonAdd">#737373</color>
+    <color name="myColorButtonAddPressed">#a1a1a1</color>
+    <color name="myColorButtonAddTextColor">#525252</color>
+    <color name="myColorBackground">#F1F1F1</color>
+    <color name="myColorEditText">#FF867D</color>
+    <color name="myColorButtonScanDisable">#D82525</color>
+    <color name="myColorTextWhite">#FFFFFF</color>
+
+    <!--For ADD ITEMS-->
+    <color name="myColorEditTextInAddItem">#dedede</color>
+    <color name="myColorBGinAdd">#ededed</color>
+
+    <!--FOR RESULT MESSAGES COLORS-->
+    <color name="myColorResultGreen">#64dd17</color>
+    <color name="myColorResultRed">#dd2c00</color>
+    <color name="myColorResultOrange">#f57f17</color>
+
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Data Collector</string>
+    <string name="add_items">Add Item</string>
+    <string name="scan_switch">Automatic Scan</string>
+</resources>

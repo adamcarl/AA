@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/myColorBGinAdd"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RESULT"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/myColorBGinAdd"
+        android:padding="10dp"
+        android:textSize="18dp"
+        android:id="@+id/txtResultMsg"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone"
+        android:gravity="center_horizontal"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/etBarcode"
+        android:layout_gravity="center_horizontal"
+        android:hint="Enter Barcode"
+        android:background="@drawable/custom_edittext_additem"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:ems="10"
+        android:id="@+id/etDescription"
+        android:layout_gravity="center_horizontal"
+        android:hint="Enter Item Description"
+        android:background="@drawable/custom_edittext_additem"
+        android:layout_marginTop="16dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="ADD"
+            android:id="@+id/btnAdd"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_button_add"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:drawableTop="@drawable/ic_add_white_24dp"
+            android:padding="13dp"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="IMPORT"
+            android:id="@+id/btnExcel"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_button_add"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="5dp"
+            android:drawableTop="@drawable/ic_file_download_white_24dp"
+            android:padding="13dp" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="EXPORT"
+            android:id="@+id/btnExport"
+            android:textColor="#ffffff"
+            android:background="@drawable/custom_button_add"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_marginLeft="5dp"
+            android:drawableTop="@drawable/ic_file_upload_white_24dp"
+            android:padding="13dp"/>
+
+    </LinearLayout>
+
+
+
+    <!--<ListView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@android:id/list"-->
+        <!--android:layout_marginTop="20dp"></ListView>-->
+
+</LinearLayout>
