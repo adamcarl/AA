@@ -22,6 +22,8 @@
     <color name="myColorEditText">#FF867D</color>
     <color name="myColorButtonScanDisable">#D82525</color>
     <color name="myColorTextWhite">#FFFFFF</color>
+    <color name="myColorEditTextDialog">#a8a8a8</color>
+    <color name="myColorIconLock">#ffce9c</color>
 
     <!--For ADD ITEMS-->
     <color name="myColorEditTextInAddItem">#dedede</color>
@@ -31,5 +33,7 @@
     <color name="myColorResultGreen">#64dd17</color>
     <color name="myColorResultRed">#dd2c00</color>
     <color name="myColorResultOrange">#f57f17</color>
+
+    <color name="myColorCardViewCashier">#eef0f1</color>
 
 </resources>

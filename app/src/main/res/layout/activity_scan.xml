@@ -1,64 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinatorLayout"
     android:background="@color/myColorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/myColorPrimary"
-        android:padding="25dp"
-        android:gravity="center">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/myColorPrimary"
+            android:gravity="center"
             android:orientation="vertical"
-            android:layout_gravity="center_horizontal">
+            android:padding="25dp">
 
-            <EditText
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etInputBarCode"
-                android:hint="SCAN BARCODE"
-                android:gravity="center_horizontal"
-                android:inputType="number"
-                android:textColorHint="@color/myColorAppBarLayout"
-                android:background="@drawable/custom_edittext"/>
-            <EditText
-                android:layout_marginTop="5dp"
-                android:id="@+id/etInputQuantity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_edittext"
-                android:gravity="center_horizontal"
-                android:hint="QUANTITY"
-                android:text="1"
-                android:inputType="number"
-                android:textColorHint="@color/myColorAppBarLayout" />
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
 
-            <Button
-                android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SCAN"
-                android:id="@+id/btnOk"
-                android:gravity="center_horizontal"
-                android:background="@drawable/custom_button_scan"
-                android:textColor="@color/myColorTextWhite"
-                android:textStyle="bold"/>
-        </LinearLayout>
+                <EditText
+                    android:id="@+id/etInputBarCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_edittext"
+                    android:gravity="center_horizontal"
+                    android:hint="SCAN BARCODE"
+                    android:inputType="number"
+                    android:textColorHint="@color/myColorAppBarLayout" />
+            </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginRight="80dp"
-            android:id="@+id/dummyView"/>
+            <View
+                android:id="@+id/dummyView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginRight="80dp" />
 
 
-        <!--<Switch-->
+            <!--<Switch-->
             <!--android:layout_width="wrap_content"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:text="Barcode scanner"-->
@@ -66,178 +50,96 @@
             <!--android:layout_marginTop="8dp"-->
             <!--android:layout_gravity="right"-->
             <!--android:textColor="@color/myColorButtonScan"/>-->
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        CONTAINER FOR 1ST ROW
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp">
-            <!--ICON CONTAINER-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="18dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_line_weight_black_48dp"
-                    android:tint="@color/myColorIcon"
-                    android:layout_gravity="center"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Bar code"
-                    android:textColor="@color/myColorIcon"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text=""
-                android:layout_marginLeft="38dp"
-                android:id="@+id/txtCode"
-                android:textColor="@color/myColorTextFieldOutput"/>
-
         </LinearLayout>
 
-        <View
-            android:layout_width="280dp"
-            android:layout_height="1dp"
-            android:background="@color/myColorIcon"
-            android:layout_marginLeft="110dp"></View>
 
-        <!--CONTAINER FOR 2ND ROW-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp">
-            <!--ICON CONTAINER-->
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            CONTAINER FOR 1ST ROW
+
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_assignment_black_48dp"
-                    android:tint="@color/myColorIcon"
-                    android:layout_gravity="center"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Description"
-                    android:textColor="@color/myColorIcon"
-                    android:layout_gravity="center"/>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text=""
-                android:id="@+id/txtDescription"
-                android:textColor="@color/myColorTextFieldOutput"
-                android:layout_marginLeft="30dp"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="280dp"
-            android:layout_height="1dp"
-            android:background="@color/myColorIcon"
-            android:layout_marginLeft="110dp"></View>
-
-        <!--CONTAINER FOR 3RD ROW-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="25dp"
-            android:paddingBottom="25dp">
-            <!--ICON CONTAINER-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="25dp"
                 android:paddingLeft="10dp"
-                android:layout_marginLeft="9dp">
-
-                <ImageView
+                android:paddingRight="10dp"
+                android:paddingTop="25dp">
+                <!--ICON CONTAINER-->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_format_list_numbered_black_48dp"
-                    android:tint="@color/myColorIcon"
-                    android:layout_gravity="center"/>
+                    android:orientation="vertical"
+                    android:paddingLeft="18dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_line_weight_black_48dp"
+                        android:tint="@color/myColorIcon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Bar code"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/myColorIcon" />
+                </LinearLayout>
 
                 <TextView
+                    android:id="@+id/txtCode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Quantity"
-                    android:textColor="@color/myColorIcon"
-                    android:layout_gravity="center"/>
+                    android:layout_marginLeft="38dp"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/myColorTextFieldOutput" />
+
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text=""
-                android:id="@+id/txtQuantity"
-                android:layout_marginLeft="39dp"
-                android:textColor="@color/myColorTextFieldOutput"/>
+            <View
+                android:layout_width="280dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="110dp"
+                android:background="@color/myColorIcon"></View>
+
+            <!--CONTAINER FOR 2ND ROW-->
+
+            <View
+                android:layout_width="280dp"
+                android:layout_height="1dp"
+                android:layout_marginLeft="110dp"
+                android:background="@color/myColorIcon"></View>
+
+            <!--CONTAINER FOR 3RD ROW-->
+
+            <!--<LinearLayout-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/myColorIcon"-->
+            <!--android:padding="25dp"-->
+            <!--android:gravity="center">-->
+
+            <!--<Button-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@drawable/custom_button_add"-->
+            <!--android:text="+ ADD RECORD"-->
+            <!--android:textStyle="bold"-->
+            <!--android:textColor="#f1f1f1"-->
+            <!--android:id="@+id/btnAdd"/>-->
+            <!--</LinearLayout>-->
         </LinearLayout>
-
-        <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/myColorIcon"-->
-        <!--android:padding="25dp"-->
-        <!--android:gravity="center">-->
-
-        <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@drawable/custom_button_add"-->
-        <!--android:text="+ ADD RECORD"-->
-        <!--android:textStyle="bold"-->
-        <!--android:textColor="#f1f1f1"-->
-        <!--android:id="@+id/btnAdd"/>-->
-        <!--</LinearLayout>-->
     </LinearLayout>
 
 
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

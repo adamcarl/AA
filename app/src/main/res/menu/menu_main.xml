@@ -6,16 +6,9 @@
     <group>
         <item
             android:id="@+id/menu_add"
+            android:icon="@drawable/custom_add_grey"
             android:orderInCategory="1"
             android:title="@string/add_items"
-            android:icon="@drawable/custom_add_grey"
             app:showAsAction="never" />
-        <item
-            android:id="@+id/menu_switch"
-            android:orderInCategory="2"
-            android:title="@string/scan_switch"
-            app:showAsAction="never"
-            android:checkable="true"
-            android:checked="false"/>
     </group>
 </menu>

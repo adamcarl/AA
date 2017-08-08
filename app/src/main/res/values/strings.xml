@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Data Collector</string>
-    <string name="add_items">Add Item</string>
+    <string name="add_items">Import and Compare</string>
     <string name="scan_switch">Automatic Scan</string>
+    <string name="export_results">Export Results</string>
 </resources>

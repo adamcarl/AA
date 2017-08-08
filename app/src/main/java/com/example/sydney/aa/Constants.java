@@ -1,4 +1,4 @@
-package com.programmer2.mybarcodescanner;
+package com.example.sydney.aa;
 
 /**
  * Created by PROGRAMMER2 on 5/11/2017.

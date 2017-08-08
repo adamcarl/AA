@@ -1,6 +1,5 @@
-package com.programmer2.mybarcodescanner;
+package com.example.sydney.aa;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -23,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,7 +44,7 @@ import java.util.HashMap;
 /**
  * Created by PROGRAMMER2 on 5/2/2017.
  */
-public class AddItem extends AppCompatActivity{
+public class AddItem extends AppCompatActivity {
 
     EditText barcode,description;
     Button add, importExcel, exportExcel;
@@ -145,8 +145,8 @@ public class AddItem extends AppCompatActivity{
                         }else if(result <= 0){
                             item.setBarcode(bcode);
                             item.setDescription(des);
-                            item.setQuantity(qty);
-                            dbhelper.insertItem(item);
+//                            item.setQuantity(qty);
+//                            dbhelper.insertItem(item);
 
 //                            cursor = sqldb.rawQuery("select * from item", null);
 
@@ -273,10 +273,10 @@ public class AddItem extends AppCompatActivity{
 //        }
     }
 
-    @Override
+       @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null){
-        return;
+            return;
         }
         switch (requestCode) {
             case requestcode:
@@ -311,15 +311,15 @@ public class AddItem extends AppCompatActivity{
 
                             //Textview Result
                             resultMsg.setVisibility(View.VISIBLE);
-                            resultMsg.setText("Successfully Imported File");
+                            resultMsg.setText("Successfully Imported File\n" + filepath);
                             resultMsg.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.color.myColorResultGreen));
-
-                            resultMsg.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    resultMsg.setVisibility(View.GONE);
-                                }
-                            }, 4000);
+//
+//                            resultMsg.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    resultMsg.setVisibility(View.GONE);
+//                                }
+//                            }, 4000);
                         } catch (SQLException e) {
                             Log.e("Error",e.getMessage().toString());
 
@@ -371,9 +371,8 @@ public class AddItem extends AppCompatActivity{
                         }, 4000);
                         db.endTransaction();
                     }
-                } 
+                }
         }
-        myList= dbhelper.getAllProducts();
 
 //        if (myList.size() != 0) {
 //            ListView lv = getListView();
@@ -388,7 +387,6 @@ public class AddItem extends AppCompatActivity{
     private void init() {
         barcode = (EditText) findViewById(R.id.etBarcode);
         description = (EditText) findViewById(R.id.etDescription);
-        add = (Button) findViewById(R.id.btnAdd);
         importExcel = (Button) findViewById(R.id.btnExcel);
 //        myListview = getListView();
         resultMsg = (TextView)findViewById(R.id.txtResultMsg);
@@ -430,14 +428,14 @@ public class AddItem extends AppCompatActivity{
         protected void onPostExecute(Boolean result)
         {
             isConnected = result;
-            Toast.makeText(context,isConnected?"Connected to server!":"Error while connecting",Toast.LENGTH_LONG).show();
+            Toast.makeText(context,isConnected?"Connected to server!":"Error while connecting", Toast.LENGTH_LONG).show();
             try {
                 if(isConnected) {
                     try {
                         //SEND FILES
                         File mSdCardDir = Environment.getExternalStorageDirectory();
                         String mFilename = dateSaved;
-                        File myFile = new File (mSdCardDir,mFilename);
+                        File myFile = new File(mSdCardDir,mFilename);
                         byte [] mybytearray  = new byte [(int)myFile.length()]; //(int)myFile.length()
                         BufferedInputStream bis;
                         try{
@@ -499,7 +497,7 @@ public class AddItem extends AppCompatActivity{
             } catch (NullPointerException e){
                 myProgDialog.dismiss();
                 Log.e("Sending Data: ", "No files has been sent!", e);
-                Toast.makeText(context,"No files has been sent!",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"No files has been sent!", Toast.LENGTH_LONG).show();
             }
             finally {
                 if (bis != null) try {

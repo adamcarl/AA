@@ -1,27 +1,27 @@
-package com.programmer2.mybarcodescanner;
+package com.example.sydney.aa;
 
 /**
  * Created by PROGRAMMER2 on 5/2/2017.
  */
-public class Item {
-    private int id;
+class Item {
+    private String status;
     private String barcode;
     private String description;
-    private int quantity;
+//    private int quantity;
 
-    public Item(int id, String barcode, String description, int quantity) {
-        this.id = id;
+    Item(String barcode, String description, String status) {
+        this.status = status;
         this.barcode = barcode;
         this.description = description;
-        this.quantity = quantity;
+//        this.quantity = quantity;
     }
 
-    public int getId() {
-        return id;
+    public String getStatus() {
+        return status;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getBarcode() {
@@ -40,13 +40,13 @@ public class Item {
         this.description = description;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
+//    public int getQuantity() {
+//        return quantity;
+//    }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+//    public void setQuantity(int quantity) {
+//        this.quantity = quantity;
+//    }
 
     Item(){
 

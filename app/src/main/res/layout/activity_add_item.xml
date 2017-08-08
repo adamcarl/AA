@@ -53,20 +53,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:text="ADD"
-            android:id="@+id/btnAdd"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#ffffff"
-            android:background="@drawable/custom_button_add"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:drawableTop="@drawable/ic_add_white_24dp"
-            android:padding="13dp"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight=".5"
             android:text="IMPORT"
             android:id="@+id/btnExcel"
             android:textColor="#ffffff"

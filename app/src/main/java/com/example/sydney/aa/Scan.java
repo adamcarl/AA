@@ -1,174 +1,66 @@
-package com.programmer2.mybarcodescanner;
+package com.example.sydney.aa;
 
-import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.StringTokenizer;
+
+import static com.example.sydney.aa.DBHelper.COLUMN_BARCODE_IMPORT;
+import static com.example.sydney.aa.DBHelper.COLUMN_DESCRIPTION_IMPORT;
+import static com.example.sydney.aa.DBHelper.TABLE_ITEM_IMPORT;
 
 /**
  * Created by PROGRAMMER2 on 5/2/2017.
  */
 public class Scan extends AppCompatActivity {
 
-    Button scan;
-    EditText enterBarcode,enterQuantity;
-    TextView  code,description,quantity;
-//    Switch mySwitch;
+    EditText enterBarcode;
+    TextView code;
+    CoordinatorLayout coordinatorLayout;
+//    TextView quantity;
     View dummyView;
+    public static final int requestcode = 1;
 
-
-    DBHelper dbhelper = new DBHelper(this);
-    AlertDialog.Builder builder = null;
-    AlertDialog alertDialog = null;
+    DBHelper dbhelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
-
         //CASTING VIEWS
         init();
-
+        dbhelper = new DBHelper(this);
         //CREATE DIALOG FOR ADMIN LOGIN
-        createMyDialog();
-        alertDialog = builder.create();
-
-        manualScan();
-
-//        mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-//                if(isChecked){
-//                    enterBarcode.setText("");
-//                    Toast.makeText(Scan.this, "Barcode Scan ON", Toast.LENGTH_SHORT).show();
-//                    scan.setEnabled(false);
-//                    scan.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.myColorAppBarLayout));
-//                    scan.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.custom_buttonscan_disable));//Change button scan color
-//                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
-//                    automaticScan();
-//                }
-//                if(!isChecked) {
-//                    Toast.makeText(Scan.this, "Manual Scan", Toast.LENGTH_SHORT).show();
-//                    scan.setEnabled(true);
-//                    scan.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.myColorTextWhite));
-//                    scan.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.custom_button_scan));//Change button scan color
-//                    manualScan();
-//                }
-//            }
-//        });
-
-//        add.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(Scan.this,AddItem.class);
-//                startActivity(intent);
-//            }
-//        });
-
-    }
-
-    private void createMyDialog(){
-        builder = new AlertDialog.Builder(this);
-
-        LayoutInflater inflater = getLayoutInflater();
-        final View alertLayout = inflater.inflate(R.layout.custom_alertdialog_login, null);
-        builder.setView(alertLayout);
-
-        final EditText userNum = (EditText)alertLayout.findViewById(R.id.etPass) ;
-        final Button login = (Button)alertLayout.findViewById(R.id.btnLogin) ;
-        final Button cancel = (Button)alertLayout.findViewById(R.id.btnCancel) ;
-
-
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String cNum = userNum.getText().toString();
-
-                if(cNum.equals("12345")){
-                    Intent intent = new Intent(Scan.this,AddItem.class);
-                    startActivity(intent);
-                    alertDialog.show();
-                }
-                else if(cNum.isEmpty()){
-                    Toast.makeText(Scan.this, "Empty password!", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(Scan.this, "Incorrect number!", Toast.LENGTH_SHORT).show();
-                }
-
-                userNum.setText("");
-                alertDialog.dismiss();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
-        });
+        automaticScan();
+        dbhelper.deleteAll();
     }
 
     private void init() {
         enterBarcode = (EditText) findViewById(R.id.etInputBarCode);
-        enterQuantity = (EditText) findViewById(R.id.etInputQuantity);
-        scan = (Button) findViewById(R.id.btnOk);
         code = (TextView) findViewById(R.id.txtCode);
-        description = (TextView) findViewById(R.id.txtDescription);
-        quantity = (TextView) findViewById(R.id.txtQuantity);
-//        add = (Button) findViewById(R.id.btnAdd);
-//        mySwitch = (Switch) findViewById(R.id.switchManual);
+//        quantity = (TextView) findViewById(R.id.txtQuantity);
         dummyView = findViewById(R.id.dummyView);
-    }
-
-    private void manualScan() {
-        enterBarcode.removeTextChangedListener(myTextWatcher);
-
-        scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    String mCode = enterBarcode.getText().toString().trim();
-                    int result = dbhelper.searchForItem(mCode);
-
-                    if(result > 0){
-                        printItem(mCode);
-                    }
-                    else if(enterBarcode.getText().toString().isEmpty()){
-                        Toast.makeText(Scan.this, "Enter the barcode!", Toast.LENGTH_SHORT).show();
-                    }
-                    else if(result == 0){
-                        Toast.makeText(Scan.this, "Barcode no match!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
     }
 
     private void automaticScan() {
@@ -177,80 +69,37 @@ public class Scan extends AppCompatActivity {
         imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
     }
 
-    private void printItem(String rCode) {
-        String query = "SELECT * FROM item WHERE barcode=" + rCode;
 
-        Cursor cursor = dbhelper.queryDataRead(query);
-
-        String mCode = "",mDes = "";
-        int mQty = 0, mId = 0;
-
-        if (cursor != null) {
-            cursor.moveToFirst();
-            mId = cursor.getInt(0);
-            mCode = cursor.getString(1);
-            mDes = cursor.getString(2);
-            mQty = cursor.getInt(3);
-        }
-        code.setText(mCode);
-        int enteredQuan = Integer.parseInt(enterQuantity.getText().toString().trim());
-        description.setText(mDes);
-        String cMqty = Integer.toString(mQty + enteredQuan);
-        quantity.setText(cMqty);
-
-        int newCount = Integer.parseInt(quantity.getText().toString());
-        mUpdate(mId,newCount);
-    }
-
-    public void mUpdate(int id,int newCount){
-        dbhelper.updateQuantity(id,newCount);
-        dbhelper.close();
-    }
+//    public void mUpdate(int id,int newCount){
+//        dbhelper.updateQuantity(id,newCount);
+//        dbhelper.close();
+//    }
 
     private TextWatcher myTextWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable editable) {
             try {
                 String mCode = enterBarcode.getText().toString().trim();
-                int result = dbhelper.searchForItem(mCode);
-
-                if(mCode.length() > 12){
-                    if(result > 0) {
-                        printItem(mCode);
-                        enterBarcode.removeTextChangedListener(myTextWatcher);
-                        enterBarcode.setText("");
-                        dummyView.requestFocus();
-
-                        enterBarcode.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                enterBarcode.requestFocus();
-                                code.setText("");
-                                description.setText("");
-                                quantity.setText("");
-                            }
-                        }, 500);
-                    }
-                    else if (result <= 0){
-                        enterBarcode.removeTextChangedListener(myTextWatcher);
-                        enterBarcode.setText("");
-                        dummyView.requestFocus();
-
-                        enterBarcode.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                enterBarcode.requestFocus();
-                                code.setText("");
-                                description.setText("");
-                                quantity.setText("");
-                            }
-                        }, 500);
-                        Toast.makeText(Scan.this, "Barcode invalid!", Toast.LENGTH_SHORT).show();
-                    }
-                    enterBarcode.addTextChangedListener(myTextWatcher);
-
+                try {
+                    dbhelper.insertItem(mCode);
+                }catch (Exception ex){
+                    ex.printStackTrace();
                 }
+//                        printItem(mCode);
+                code.setText(mCode);
+                        enterBarcode.removeTextChangedListener(myTextWatcher);
+                        enterBarcode.setText("");
+                        dummyView.requestFocus();
 
+                        enterBarcode.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                enterBarcode.requestFocus();
+                                code.setText("");
+//                                quantity.setText("");
+                            }
+                        }, 1000);
+                    enterBarcode.addTextChangedListener(myTextWatcher);
             }
             catch (Exception e){
                 e.printStackTrace();
@@ -258,14 +107,9 @@ public class Scan extends AppCompatActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
         @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }};
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}};
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -286,47 +130,85 @@ public class Scan extends AppCompatActivity {
 
         switch(id){
             case R.id.menu_add:
-                alertDialog.show();
-                return true;
-
-            case R.id.menu_switch:
-                if(item.isChecked()){
-                    Toast.makeText(Scan.this, "Manual Scan", Toast.LENGTH_SHORT).show();
-                    scan.setEnabled(true);
-                    scan.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.myColorTextWhite));
-                    scan.setBackground(ContextCompat.getDrawable(getApplicationContext(),R.drawable.custom_button_scan));//Change button scan color
-                    manualScan();
-
-                    item.setChecked(false);
-                } else {
-                    enterBarcode.setText("");
-                    Toast.makeText(Scan.this, "Barcode Scan ON", Toast.LENGTH_SHORT).show();
-                    scan.setEnabled(false);
-                    scan.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.myColorAppBarLayout));
-                    scan.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.custom_buttonscan_disable));//Change button scan color
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
-                    automaticScan();
-
-                    item.setChecked(true);
-
-                }
+                importAndCompare();
                 return true;
             default:
-                alertDialog.dismiss();
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
     protected void onDestroy() {
-        alertDialog.dismiss();
         super.onDestroy();
     }
 
     @Override
     protected void onPostResume() {
-        alertDialog.dismiss();
         super.onPostResume();
     }
+    //IMPORTING FILE
+
+        public void importAndCompare() {
+            Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
+            fileintent.setType("text/csv");
+            try {
+                startActivityForResult(fileintent, requestcode);
+
+            } catch (ActivityNotFoundException e) {
+                //Textview Result
+                Snackbar snackbar = Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null){
+            return;
+        }
+        switch (requestCode) {
+            case requestcode:
+                String filepath = data.getData().getPath();
+                dbhelper.dbWriter.execSQL("delete from " + TABLE_ITEM_IMPORT);
+                try {
+                    if (resultCode == RESULT_OK) {
+                        try {
+                            FileReader file = new FileReader(filepath);
+                            BufferedReader buffer = new BufferedReader(file);
+                            ContentValues contentValues = new ContentValues();
+                            String line = "";
+                            while ((line = buffer.readLine()) != null) {
+                                StringTokenizer tokens = new StringTokenizer(line, ",");
+                                String barcode = tokens.nextToken();
+                                String description = tokens.nextToken();
+                                //id, barcode,description,quantity
+                                contentValues.put(COLUMN_BARCODE_IMPORT, barcode);
+                                contentValues.put(COLUMN_DESCRIPTION_IMPORT, description);
+                                dbhelper.dbWriter.insert(TABLE_ITEM_IMPORT, null, contentValues);
+                            }
+
+                            //Textview Result
+//                            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Successfully Imported File\n" + filepath, Snackbar.LENGTH_LONG);
+//                            snackbar.show();
+
+                            Intent intent = new Intent(this, CompareActivity.class);
+                            startActivity(intent);
+//                            resultMsg.postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    resultMsg.setVisibility(View.GONE);
+//                                }
+//                            }, 4000);
+                        } catch (SQLException e) {
+                            Log.e("Error",e.getMessage());
+                        }
+                    }
+                } catch (Exception ex) {
+                        //Textview Result
+                        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    ex.printStackTrace();
+                }
+        }
+    }
+
 }
