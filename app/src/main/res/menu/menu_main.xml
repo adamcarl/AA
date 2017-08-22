@@ -10,5 +10,11 @@
             android:orderInCategory="1"
             android:title="@string/add_items"
             app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_preexport"
+            android:icon="@drawable/custom_add_grey"
+            android:orderInCategory="1"
+            android:title="@string/export_results"
+            app:showAsAction="never" />
     </group>
 </menu>

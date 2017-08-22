@@ -14,23 +14,15 @@ import java.util.HashMap;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    static final String DATABASE_NAME = "dbscanner.db";
-    static final int DATABASE_VERSION = 1;
-
-    SQLiteDatabase dbWriter = this.getWritableDatabase();
-    SQLiteDatabase dbReader = this.getReadableDatabase();
-
     static final String TABLE_ITEM = "item";
     static final String TABLE_ITEM_IMPORT = "itemImport";
-
     static final String COLUMN_ID = "id";
     static final String COLUMN_BARCODE = "barcode";
-
     static final String COLUMN_ID_IMPORT = "idImport";
     static final String COLUMN_BARCODE_IMPORT = "barcodeImport";
     static final String COLUMN_DESCRIPTION_IMPORT = "descriptionImport";
-//    private static final String COLUMN_QUANTITY= "quantity";
-
+    private static final String DATABASE_NAME = "dbscanner.db";
+    private static final int DATABASE_VERSION = 1;
     private static final String TABLE_ITEM_CREATE = "create table if not exists "+TABLE_ITEM+" ("
             +COLUMN_ID+" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
             +COLUMN_BARCODE+" TEXT)";
@@ -38,6 +30,9 @@ public class DBHelper extends SQLiteOpenHelper {
             +COLUMN_ID_IMPORT+" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
             +COLUMN_BARCODE_IMPORT+" TEXT, "
             +COLUMN_DESCRIPTION_IMPORT+" TEXT) ";
+    //    private static final String COLUMN_QUANTITY= "quantity";
+    SQLiteDatabase dbWriter = this.getWritableDatabase();
+    SQLiteDatabase dbReader = this.getReadableDatabase();
 //            +COLUMN_QUANTITY+" INTEGER)";
 
     DBHelper(Context context) {
@@ -135,12 +130,37 @@ public class DBHelper extends SQLiteOpenHelper {
                 proList.add(map);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return proList;
     }
     Cursor getAllItems(){
         String rawBaKamo = "SELECT " + TABLE_ITEM_IMPORT + "." + COLUMN_BARCODE_IMPORT + " , " + TABLE_ITEM_IMPORT + "." + COLUMN_DESCRIPTION_IMPORT + " , "
                 + TABLE_ITEM + "." + COLUMN_BARCODE + " FROM " + TABLE_ITEM_IMPORT + " LEFT JOIN " + TABLE_ITEM + " ON "
-                + TABLE_ITEM_IMPORT + "." + COLUMN_BARCODE_IMPORT + " = " + TABLE_ITEM + "." + COLUMN_BARCODE + " GROUP BY " + COLUMN_BARCODE_IMPORT;
+                + TABLE_ITEM_IMPORT + "." + COLUMN_BARCODE_IMPORT + " = " + TABLE_ITEM + "." + COLUMN_BARCODE + " UNION" +
+                " SELECT " + TABLE_ITEM_IMPORT + "." + COLUMN_BARCODE_IMPORT + " , " + TABLE_ITEM_IMPORT + "." + COLUMN_DESCRIPTION_IMPORT + " , "
+                + TABLE_ITEM + "." + COLUMN_BARCODE + " FROM " + TABLE_ITEM + " LEFT JOIN " + TABLE_ITEM_IMPORT + " ON "
+                + TABLE_ITEM_IMPORT + "." + COLUMN_BARCODE_IMPORT + " = " + TABLE_ITEM + "." + COLUMN_BARCODE;
+        return queryDataRead(rawBaKamo);
+    }
+
+    int[] countAll() {
+        int countBaKamo[] = new int[2];
+        Cursor cursorBaKamo;
+        String rawBaKamoPos = "SELECT COUNT(*) FROM " + TABLE_ITEM_IMPORT;
+        String rawBaKamoCollector = "SELECT COUNT(*) FROM " + TABLE_ITEM;
+        cursorBaKamo = queryDataRead(rawBaKamoPos);
+        cursorBaKamo.moveToFirst();
+        countBaKamo[0] = cursorBaKamo.getInt(0);
+
+        cursorBaKamo = queryDataRead(rawBaKamoCollector);
+        cursorBaKamo.moveToFirst();
+        countBaKamo[1] = cursorBaKamo.getInt(0);
+
+        return countBaKamo;
+    }
+
+    Cursor exportAllItems() {
+        String rawBaKamo = "SELECT " + COLUMN_BARCODE + " FROM " + TABLE_ITEM;
         return queryDataRead(rawBaKamo);
     }
 

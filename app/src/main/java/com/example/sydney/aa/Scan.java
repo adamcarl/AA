@@ -4,8 +4,10 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -22,7 +24,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import static com.example.sydney.aa.DBHelper.COLUMN_BARCODE_IMPORT;
@@ -34,47 +41,15 @@ import static com.example.sydney.aa.DBHelper.TABLE_ITEM_IMPORT;
  */
 public class Scan extends AppCompatActivity {
 
+    public static final int requestcode = 1;
     EditText enterBarcode;
     TextView code;
     CoordinatorLayout coordinatorLayout;
 //    TextView quantity;
     View dummyView;
-    public static final int requestcode = 1;
+    CSVWriter csvWrite;
 
     DBHelper dbhelper;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan);
-        //CASTING VIEWS
-        init();
-        dbhelper = new DBHelper(this);
-        //CREATE DIALOG FOR ADMIN LOGIN
-        automaticScan();
-        dbhelper.deleteAll();
-    }
-
-    private void init() {
-        enterBarcode = (EditText) findViewById(R.id.etInputBarCode);
-        code = (TextView) findViewById(R.id.txtCode);
-//        quantity = (TextView) findViewById(R.id.txtQuantity);
-        dummyView = findViewById(R.id.dummyView);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-    }
-
-    private void automaticScan() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        enterBarcode.addTextChangedListener(myTextWatcher);
-        imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
-    }
-
-
-//    public void mUpdate(int id,int newCount){
-//        dbhelper.updateQuantity(id,newCount);
-//        dbhelper.close();
-//    }
-
     private TextWatcher myTextWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable editable) {
@@ -112,6 +87,38 @@ public class Scan extends AppCompatActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}};
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scan);
+        //CASTING VIEWS
+        init();
+        dbhelper = new DBHelper(this);
+        //CREATE DIALOG FOR ADMIN LOGIN
+        automaticScan();
+        dbhelper.deleteAll();
+    }
+
+    private void init() {
+        enterBarcode = (EditText) findViewById(R.id.etInputBarCode);
+        code = (TextView) findViewById(R.id.txtCode);
+//        quantity = (TextView) findViewById(R.id.txtQuantity);
+        dummyView = findViewById(R.id.dummyView);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+    }
+
+
+//    public void mUpdate(int id,int newCount){
+//        dbhelper.updateQuantity(id,newCount);
+//        dbhelper.close();
+//    }
+
+    private void automaticScan() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        enterBarcode.addTextChangedListener(myTextWatcher);
+        imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main,menu);
 
@@ -129,6 +136,9 @@ public class Scan extends AppCompatActivity {
         int id = item.getItemId();
 
         switch(id){
+            case R.id.menu_preexport:
+                exportBaKamo();
+                return true;
             case R.id.menu_add:
                 importAndCompare();
                 return true;
@@ -208,6 +218,37 @@ public class Scan extends AppCompatActivity {
                         snackbar.show();
                     ex.printStackTrace();
                 }
+        }
+    }
+
+    void exportBaKamo() {
+        File exportDir = new File(Environment.getExternalStorageDirectory() + "/tmp", "");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+
+        DateFormat dateFormat = new SimpleDateFormat("MM_dd_yyyy HH_mm_ss");
+        Date date = new Date();
+
+        File file = new File(exportDir, "collection_" + dateFormat.format(date) + ".csv");
+        try {
+            file.createNewFile();
+            csvWrite = new CSVWriter(new FileWriter(file));
+            Cursor curSV = dbhelper.exportAllItems();
+
+            curSV.moveToFirst();
+            while (!curSV.isAfterLast()) {
+                String arrStr[] = {curSV.getString(0)};
+                csvWrite.writeNext(arrStr);
+                curSV.moveToNext();
+            }
+            csvWrite.close();
+            curSV.close();
+
+            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Export Successful", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        } catch (Exception sqlEx) {
+            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
         }
     }
 

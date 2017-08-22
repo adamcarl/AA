@@ -1,18 +1,24 @@
 package com.example.sydney.aa;
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,11 +30,16 @@ import java.util.List;
 
 public class CompareActivity extends AppCompatActivity {
     DBHelper dbhelper;
+    CoordinatorLayout coordinatorLayout;
+    CSVWriter csvWrite;
+    String enteredStore = null;
     private List<Item> itemList;
     private RecyclerView recyclerView;
     private GridLayoutManager mLayoutManager;
-    CoordinatorLayout coordinatorLayout;
-    CSVWriter csvWrite;
+    private AlertDialog.Builder builder = null;
+    private AlertDialog alertDialog = null;
+
+    private ProgressDialog myProgDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +49,10 @@ public class CompareActivity extends AppCompatActivity {
         //RECYCLERVIEW INITIALIZATION
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view_compare);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator123);
+
+        createMyDialog();
+        alertDialog = builder.create();
+        myProgDialog = new ProgressDialog(this);
 
         refreshRecyclerView();
     }
@@ -77,7 +92,8 @@ public class CompareActivity extends AppCompatActivity {
         cursor.close();
         return itemList;
     }
-    void exportBaKamo(){
+
+    void exportBaKamo(String mEnteredStore) {
         File exportDir = new File(Environment.getExternalStorageDirectory()+"/tmp", "");
         if (!exportDir.exists())
         {
@@ -94,18 +110,27 @@ public class CompareActivity extends AppCompatActivity {
             csvWrite = new CSVWriter(new FileWriter(file));
             Cursor curSV = dbhelper.getAllItems();
 
-            String status;
+            String a[] = {"Store: " + mEnteredStore};
+            csvWrite.writeNext(a);
+            int countBaKamo[] = dbhelper.countAll();
+            String b[] = {"Item", "Pos(" + countBaKamo[0] + ")", "Collector(" + countBaKamo[1] + ")", "Remarks"};
+            csvWrite.writeNext(b);
+
+            String status, status1;
             curSV.moveToFirst();
+
+
             while(!curSV.isAfterLast()){
 
                 status = curSV.getString(2);
-                if(status == null){
-                    status = "0";
+                status1 = curSV.getString(0);
+                if (status == null || status1 == null) {
+                    status = "Unmatched";
                 }
                 else {
-                    status = "1";
+                    status = "Matched";
                 }
-                String arrStr[] = {curSV.getString(0),curSV.getString(1), status};
+                String arrStr[] = {curSV.getString(1), curSV.getString(0), curSV.getString(2), status};
                 csvWrite.writeNext(arrStr);
                 curSV.moveToNext();
             }
@@ -114,11 +139,61 @@ public class CompareActivity extends AppCompatActivity {
 
             Snackbar snackbar = Snackbar.make(coordinatorLayout, "Export Successful", Snackbar.LENGTH_LONG);
             snackbar.show();
+            myProgDialog.dismiss();
+
         }
         catch(Exception sqlEx)
         {
             Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
         }
+    }
+
+    private void createMyDialog() {
+        builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        final View alertLayout = inflater.inflate(R.layout.custom_alertdialog_enter_ip, null);
+        builder.setView(alertLayout);
+
+        final EditText serverIP = (EditText) alertLayout.findViewById(R.id.etIP);
+        final Button submit = (Button) alertLayout.findViewById(R.id.btnSubmit);
+        final Button cancel = (Button) alertLayout.findViewById(R.id.btnCancel);
+
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String eIp = serverIP.getText().toString();
+
+
+                if (!eIp.isEmpty()) {
+                    serverIP.setText("");
+                    enteredStore = eIp;
+                    alertDialog.dismiss();
+
+
+                    if (enteredStore != null) {
+                        alertDialog.dismiss();
+                        myProgDialog.setMessage("Exporting...");
+                        myProgDialog.show();
+                    }
+                    exportBaKamo(enteredStore);
+                } else if (eIp.isEmpty()) {
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Empty input", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                } else {
+                    Snackbar snackbar = Snackbar.make(coordinatorLayout, "Invalid store", Snackbar.LENGTH_LONG);
+                    snackbar.show();
+                }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
     }
 
     @Override
@@ -140,7 +215,7 @@ public class CompareActivity extends AppCompatActivity {
 
         switch(id){
             case R.id.menu_export:
-                exportBaKamo();
+                alertDialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
