@@ -103,7 +103,7 @@ public class CompareActivity extends AppCompatActivity {
         DateFormat dateFormat = new SimpleDateFormat("MM_dd_yyyy HH_mm_ss");
         Date date = new Date();
 
-        File file = new File(exportDir, "dataResult"+ dateFormat.format(date) +".csv");
+        File file = new File(exportDir, "Result_" + mEnteredStore + "_" + dateFormat.format(date) + ".csv");
         try
         {
             file.createNewFile();
@@ -113,12 +113,11 @@ public class CompareActivity extends AppCompatActivity {
             String a[] = {"Store: " + mEnteredStore};
             csvWrite.writeNext(a);
             int countBaKamo[] = dbhelper.countAll();
-            String b[] = {"Item", "Pos(" + countBaKamo[0] + ")", "Collector(" + countBaKamo[1] + ")", "Remarks"};
+            String b[] = {"Item", "Pos(" + countBaKamo[0] + ")", "Collector(" + countBaKamo[1] + ")", "Remark"};
             csvWrite.writeNext(b);
 
             String status, status1;
             curSV.moveToFirst();
-
 
             while(!curSV.isAfterLast()){
 
