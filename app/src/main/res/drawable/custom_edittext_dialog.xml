@@ -1,0 +1,18 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="true">
+        <shape>
+            <corners android:radius="4dp"/>
+            <padding android:left="15dp" android:top="15dp" android:right="15dp"  android:bottom="15dp"/>
+            <solid android:color="@color/myColorCardViewCashier"/>
+        </shape>
+    </item>
+
+    <item android:state_enabled="false">
+        <shape>
+            <corners android:radius="4dp"/>
+            <padding android:left="15dp" android:top="15dp" android:right="15dp"  android:bottom="15dp"/>
+            <solid android:color="@color/myColorEditTextDialogDisable"/>
+        </shape>
+    </item>
+</selector>

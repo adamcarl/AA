@@ -1,27 +1,44 @@
 package com.example.sydney.aa;
 
+import android.app.Dialog;
+import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,92 +47,141 @@ import java.io.FileWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.StringTokenizer;
 
-import static com.example.sydney.aa.DBHelper.COLUMN_BARCODE_IMPORT;
-import static com.example.sydney.aa.DBHelper.COLUMN_DESCRIPTION_IMPORT;
-import static com.example.sydney.aa.DBHelper.TABLE_ITEM_IMPORT;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_CASE;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_CODE;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_DESC;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_PIECE;
+import static com.example.sydney.aa.Constants.COLUMN_PO_CODE;
+import static com.example.sydney.aa.Constants.COLUMN_PO_NUMBER;
+import static com.example.sydney.aa.Constants.TABLE_DATA;
+import static com.example.sydney.aa.Constants.TABLE_LIST;
+import static com.example.sydney.aa.Constants.TABLE_PO;
+import static com.example.sydney.aa.R.color.myColorBackgroundWhite;
+import static com.example.sydney.aa.R.layout.activity_scan;
 
 /**
  * Created by PROGRAMMER2 on 5/2/2017.
  */
 public class Scan extends AppCompatActivity {
 
-    public static final int requestcode = 1;
-    EditText enterBarcode;
-    TextView code;
+    Button searchItem, mainSubmit, mainClear;
+    EditText enterNumber, enterCode, quanCase, quanPiece;
+    TextView desc;
     CoordinatorLayout coordinatorLayout;
-//    TextView quantity;
     View dummyView;
-    CSVWriter csvWrite;
 
     DBHelper dbhelper;
-    private TextWatcher myTextWatcher = new TextWatcher() {
-        @Override
-        public void afterTextChanged(Editable editable) {
-            try {
-                String mCode = enterBarcode.getText().toString().trim();
-                try {
-                    dbhelper.insertItem(mCode);
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                }
-//                        printItem(mCode);
-                code.setText(mCode);
-                        enterBarcode.removeTextChangedListener(myTextWatcher);
-                        enterBarcode.setText("");
-                        dummyView.requestFocus();
 
-                        enterBarcode.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                enterBarcode.requestFocus();
-                                code.setText("");
-//                                quantity.setText("");
-                            }
-                        }, 1000);
-                    enterBarcode.addTextChangedListener(myTextWatcher);
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}};
+//    private TextWatcher myTextWatcher = new TextWatcher() {
+//        @Override
+//        public void afterTextChanged(Editable editable) {
+//            String[] list;
+//            try {
+//                String mCode = enterNumber.getText().toString().trim();
+//                list = dbhelper.searchForItem(mCode);
+////                        printItem(mCode);
+//                code.setText(list[0]);
+//                desc.setText(list[1]);
+//                enterNumber.removeTextChangedListener(myTextWatcher);
+////                        enterBarcode.setText("");
+//                        dummyView.requestFocus();
+//
+//                        enterNumber.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+////                                enterNumber.requestFocus();
+////                                code.setText("");
+////                                quantity.setText("");
+//                            }
+//                        }, 1000);
+//                    enterNumber.addTextChangedListener(myTextWatcher);
+//            }
+//            catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+//        @Override
+//        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan);
-        //CASTING VIEWS
+        setContentView(activity_scan);
         init();
         dbhelper = new DBHelper(this);
-        //CREATE DIALOG FOR ADMIN LOGIN
-        automaticScan();
-        dbhelper.deleteAll();
+
+        searchItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] list;
+                try {
+                    String mNumber = enterNumber.getText().toString().trim();
+                    String mCode = enterCode.getText().toString().trim();
+                    list = dbhelper.searchForItem(mNumber,mCode);
+                    if(list == null){
+                        enterNumber.setText("");
+                        enterCode.setText("");
+                        desc.setText("");
+                        enterNumber.setEnabled(true);
+                        enterCode.setEnabled(true);
+                        quanCase.setEnabled(false);
+                        quanPiece.setEnabled(false);
+                        enterNumber.requestFocus();
+                        Snackbar.make(coordinatorLayout, "NOT FOUND", Snackbar.LENGTH_LONG).show();
+                    }
+
+                    else {
+                        desc.setText(list[1]);
+                        enterNumber.setEnabled(false);
+                        enterCode.setEnabled(false);
+                        searchItem.setEnabled(false);
+                        quanCase.setEnabled(true);
+                        quanPiece.setEnabled(true);
+                        quanCase.requestFocus();
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mainSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitBaKamo();
+            }
+        });
+
+        mainClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearBaKamo();
+            }
+        });
     }
 
     private void init() {
-        enterBarcode = (EditText) findViewById(R.id.etInputBarCode);
-        code = (TextView) findViewById(R.id.txtCode);
-//        quantity = (TextView) findViewById(R.id.txtQuantity);
+
+        desc = (TextView) findViewById(R.id.txtDesc);
+
+        enterNumber = (EditText) findViewById(R.id.etInputPONumber);
+        enterCode = (EditText) findViewById(R.id.etInputItemCode);
+        quanCase = (EditText) findViewById(R.id.etCase);
+        quanPiece = (EditText) findViewById(R.id.etPiece);
+
+        searchItem = (Button) findViewById(R.id.btnSearchItem);
+        mainSubmit = (Button) findViewById(R.id.btn_submit);
+        mainClear = (Button) findViewById(R.id.btn_clear);
+
         dummyView = findViewById(R.id.dummyView);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-    }
-
-
-//    public void mUpdate(int id,int newCount){
-//        dbhelper.updateQuantity(id,newCount);
-//        dbhelper.close();
-//    }
-
-    private void automaticScan() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        enterBarcode.addTextChangedListener(myTextWatcher);
-        imm.hideSoftInputFromWindow(enterBarcode.getWindowToken(), 0);
     }
 
     @Override
@@ -134,13 +200,24 @@ public class Scan extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-
         switch(id){
-            case R.id.menu_preexport:
-                exportBaKamo();
+            case R.id.menu_load_list:
+                importList();
                 return true;
-            case R.id.menu_add:
-                importAndCompare();
+            case R.id.menu_load_po:
+                importPO();
+                return true;
+            case R.id.menu_finalize:
+                finalizeBaKamo();
+                return true;
+            case R.id.menu_clear_master:
+                clearDatabase(1);
+                return true;
+            case R.id.menu_clear_po:
+                clearDatabase(2);
+                return true;
+            case R.id.menu_clear_scan:
+                clearDatabase(3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -158,98 +235,251 @@ public class Scan extends AppCompatActivity {
     }
     //IMPORTING FILE
 
-        public void importAndCompare() {
-            Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-            fileintent.setType("text/csv");
-            try {
-                startActivityForResult(fileintent, requestcode);
-
-            } catch (ActivityNotFoundException e) {
-                //Textview Result
-                Snackbar snackbar = Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG);
-                snackbar.show();
-            }
+    public void importList() {
+        Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileintent.setType("text/csv");
+        try {
+            startActivityForResult(fileintent, 1);
+        } catch (ActivityNotFoundException e) {
+            Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    public void importPO() {
+        Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
+        fileintent.setType("text/csv");
+        try {
+            startActivityForResult(fileintent, 2);
+        } catch (ActivityNotFoundException e) {
+            Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG).show();
+        }
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null){
             return;
         }
         switch (requestCode) {
-            case requestcode:
+            case 1:
                 String filepath = data.getData().getPath();
-                dbhelper.dbWriter.execSQL("delete from " + TABLE_ITEM_IMPORT);
+                dbhelper.dbWriter.execSQL("delete from " + TABLE_LIST);
                 try {
                     if (resultCode == RESULT_OK) {
                         try {
                             FileReader file = new FileReader(filepath);
                             BufferedReader buffer = new BufferedReader(file);
                             ContentValues contentValues = new ContentValues();
-                            String line = "";
+                            String line;
                             while ((line = buffer.readLine()) != null) {
                                 StringTokenizer tokens = new StringTokenizer(line, ",");
-                                String barcode = tokens.nextToken();
-                                String description = tokens.nextToken();
-                                //id, barcode,description,quantity
-                                contentValues.put(COLUMN_BARCODE_IMPORT, barcode);
-                                contentValues.put(COLUMN_DESCRIPTION_IMPORT, description);
-                                dbhelper.dbWriter.insert(TABLE_ITEM_IMPORT, null, contentValues);
+                                String mCode = tokens.nextToken();
+                                String mDesc = tokens.nextToken();
+                                String mQuanCase = tokens.nextToken();
+                                String mQuanPiece = tokens.nextToken();
+
+                                contentValues.put(COLUMN_LIST_CODE, mCode);
+                                contentValues.put(COLUMN_LIST_DESC, mDesc);
+                                contentValues.put(COLUMN_LIST_CASE, mQuanCase);
+                                contentValues.put(COLUMN_LIST_PIECE, mQuanPiece);
+                                dbhelper.dbWriter.insert(TABLE_LIST, null, contentValues);
                             }
-
-                            //Textview Result
-//                            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Successfully Imported File\n" + filepath, Snackbar.LENGTH_LONG);
-//                            snackbar.show();
-
-                            Intent intent = new Intent(this, CompareActivity.class);
-                            startActivity(intent);
-//                            resultMsg.postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    resultMsg.setVisibility(View.GONE);
-//                                }
-//                            }, 4000);
+                            Snackbar.make(coordinatorLayout, "Import successful.", Snackbar.LENGTH_LONG).show();
                         } catch (SQLException e) {
                             Log.e("Error",e.getMessage());
                         }
                     }
                 } catch (Exception ex) {
-                        //Textview Result
-                        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+                    Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG).show();
                     ex.printStackTrace();
                 }
+                break;
+            case 2:
+                String filePO = data.getData().getPath();
+                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
+                try {
+                    if (resultCode == RESULT_OK) {
+                        try {
+                            FileReader file = new FileReader(filePO);
+                            BufferedReader buffer = new BufferedReader(file);
+                            ContentValues contentValues = new ContentValues();
+                            String line;
+                            while ((line = buffer.readLine()) != null) {
+                                StringTokenizer tokens = new StringTokenizer(line, ",");
+                                String mNumber = tokens.nextToken();
+                                String mCode = tokens.nextToken();
+
+                                contentValues.put(COLUMN_PO_NUMBER, mNumber);
+                                contentValues.put(COLUMN_PO_CODE, mCode);
+                                dbhelper.dbWriter.insert(TABLE_PO, null, contentValues);
+                            }
+                            Snackbar.make(coordinatorLayout, "Import successful.", Snackbar.LENGTH_LONG).show();
+                        } catch (SQLException e) {
+                            Log.e("Error",e.getMessage());
+                        }
+                    }
+                } catch (Exception ex) {
+                    Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG).show();
+                    ex.printStackTrace();
+                }
+                break;
         }
     }
 
-    void exportBaKamo() {
-        File exportDir = new File(Environment.getExternalStorageDirectory() + "/tmp", "");
-        if (!exportDir.exists()) {
-            exportDir.mkdirs();
+    void clearDatabase(int code){
+        switch (code){
+            case 1:
+                new AlertDialog.Builder(this)
+                        .setTitle("Clear Master List")
+                        .setMessage("Do you really want to clear Master List?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dbhelper.dbWriter.execSQL("delete from " + TABLE_LIST);
+                                Snackbar.make(coordinatorLayout, "Master List cleared", Snackbar.LENGTH_LONG).show();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+                break;
+            case 2:
+                new AlertDialog.Builder(this)
+                        .setTitle("Clear PO")
+                        .setMessage("Do you really want to clear PO?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
+                                Snackbar.make(coordinatorLayout, "PO cleared", Snackbar.LENGTH_LONG).show();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+                break;
+            case 3:
+                new AlertDialog.Builder(this)
+                        .setTitle("Clear Data Scan")
+                        .setMessage("Do you really want to clear Data Scan?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dbhelper.dbWriter.execSQL("delete from " + TABLE_DATA);
+                                Snackbar.make(coordinatorLayout, "Data Scan cleared", Snackbar.LENGTH_LONG).show();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+                break;
         }
+    }
+    void submitBaKamo(){
 
-        DateFormat dateFormat = new SimpleDateFormat("MM_dd_yyyy HH_mm_ss");
-        Date date = new Date();
+        //Return legends
+        //1 = New item added.
+        //2 = Old item updated.
+        //3 = Quantity is above the limit.
+        //5 = Failed to update quantity.
+        //6 = Unknown Database error.
+        //7 = Failed to add item.
 
-        File file = new File(exportDir, "collection_" + dateFormat.format(date) + ".csv");
-        try {
-            file.createNewFile();
-            csvWrite = new CSVWriter(new FileWriter(file));
-            Cursor curSV = dbhelper.exportAllItems();
+        new AlertDialog.Builder(this)
+                .setTitle("Submit Data")
+                .setMessage("Do you really want to Submit?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
 
-            curSV.moveToFirst();
-            while (!curSV.isAfterLast()) {
-                String arrStr[] = {curSV.getString(0)};
-                csvWrite.writeNext(arrStr);
-                curSV.moveToNext();
+                        int mCase, mPiece;
+
+                        if(quanCase.getText().toString().trim().equals(""))
+                            mCase = 0;
+                        else
+                            mCase = Integer.parseInt(quanCase.getText().toString().trim());
+
+                        if(quanPiece.getText().toString().trim().equals(""))
+                            mPiece = 0;
+                        else
+                            mPiece = Integer.parseInt(quanPiece.getText().toString().trim());
+
+                        int result = dbhelper.insertItem(enterNumber.getText().toString().trim(),
+                                enterCode.getText().toString().trim(), mCase, mPiece);
+
+                        if (result==1)
+                            Snackbar.make(coordinatorLayout, "Added new item", Snackbar.LENGTH_LONG).show();
+                        else if(result==2)
+                            Snackbar.make(coordinatorLayout, "Updated old item", Snackbar.LENGTH_LONG).show();
+                        else if(result==3)
+                            Snackbar.make(coordinatorLayout, "Quantity not allowed", Snackbar.LENGTH_LONG).show();
+                        else if(result==5)
+                            Snackbar.make(coordinatorLayout, "Failed to update quantity", Snackbar.LENGTH_LONG).show();
+                        else if(result==6)
+                            Snackbar.make(coordinatorLayout, "Unknown database error", Snackbar.LENGTH_LONG).show();
+                        else if(result==7)
+                            Snackbar.make(coordinatorLayout, "Failed to add item", Snackbar.LENGTH_LONG).show();
+
+                        enterNumber.setText("");
+                        enterCode.setText("");
+                        desc.setText("");
+                        quanCase.setText("");
+                        quanPiece.setText("");
+                        enterNumber.setEnabled(true);
+                        enterCode.setEnabled(true);
+                        searchItem.setEnabled(true);
+                        quanCase.setEnabled(false);
+                        quanPiece.setEnabled(false);
+                        enterNumber.requestFocus();
+
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    void finalizeBaKamo(){
+        AlertDialog.Builder finalizeBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        final View alertLayout = inflater.inflate(R.layout.custom_alertdialog_finalize, null);
+        finalizeBuilder.setView(alertLayout);
+
+        final AppCompatButton btnEnterAuthenticate = (AppCompatButton) alertLayout.findViewById(R.id.btnFinalizeSignature);
+        final AppCompatButton btnCancel = (AppCompatButton) alertLayout.findViewById(R.id.btnFinalizeCancel);
+        final AppCompatEditText etName = (AppCompatEditText) alertLayout.findViewById(R.id.etFinalizeName);
+
+        final AlertDialog alertFinalize =  finalizeBuilder.create();
+        alertFinalize.show();
+        btnEnterAuthenticate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String mName = etName.getText().toString().trim();
+                Intent myIntent = new Intent(Scan.this, SignatureActivity.class);
+                myIntent.putExtra("name", mName);
+                Scan.this.startActivity(myIntent);
+                Scan.this.finish();
             }
-            csvWrite.close();
-            curSV.close();
-
-            Snackbar snackbar = Snackbar.make(coordinatorLayout, "Export Successful", Snackbar.LENGTH_LONG);
-            snackbar.show();
-        } catch (Exception sqlEx) {
-            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
-        }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertFinalize.dismiss();
+            }
+        });
     }
+
+    void clearBaKamo(){
+        new AlertDialog.Builder(this)
+                .setTitle("Clear")
+                .setMessage("Do you really want to clear?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        enterNumber.setText("");
+                        enterCode.setText("");
+                        desc.setText("");
+                        quanCase.setText("");
+                        quanPiece.setText("");
+                        enterNumber.setEnabled(true);
+                        enterCode.setEnabled(true);
+                        searchItem.setEnabled(true);
+                        quanCase.setEnabled(false);
+                        quanPiece.setEnabled(false);
+                        enterNumber.requestFocus();
+
+                        Snackbar.make(coordinatorLayout, "Cleared", Snackbar.LENGTH_LONG).show();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+    }
+
 
 }

@@ -24,10 +24,6 @@
             </intent-filter>
         </activity>
         //ADD ITEM ACTIVITY
-        <activity
-            android:name=".AddItem"
-            android:label="Add Record"
-            android:parentActivityName=".Scan"></activity>
 
         <!-- //GLOBAL CLASS -->
         <!-- <application android:name="com.GlobalClass"> -->
@@ -51,7 +47,9 @@
 
         <!-- </receiver> -->
         <!-- </application> -->
-        <activity android:name=".CompareActivity"></activity>
+        <activity android:name=".SignatureActivity"
+            android:screenOrientation="landscape">
+        </activity>
     </application>
 
 </manifest>

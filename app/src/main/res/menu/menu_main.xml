@@ -4,17 +4,62 @@
     <!--<item android:id="@+id/action_connect" android:title="@string/connect_to_server"-->
     <!--android:icon="@drawable/ic_line_weight_black_48dp" app:showAsAction="ifRoom"/>-->
     <group>
+        <!--<item-->
+            <!--android:id="@+id/menu_add"-->
+            <!--android:icon="@drawable/custom_add_grey"-->
+            <!--android:orderInCategory="1"-->
+            <!--android:title="@string/add_items"-->
+            <!--app:showAsAction="never" />-->
+        <!--<item-->
+            <!--android:id="@+id/menu_preexport"-->
+            <!--android:icon="@drawable/custom_add_grey"-->
+            <!--android:orderInCategory="1"-->
+            <!--android:title="@string/export_results"-->
+            <!--app:showAsAction="never" />-->
+        <!--<item-->
+            <!--android:id="@+id/menu_switch"-->
+            <!--android:orderInCategory="1"-->
+            <!--android:title="@string/scan_switch"-->
+            <!--app:showAsAction="never"-->
+            <!--android:checkable="true"-->
+            <!--android:checked="true"/>-->
         <item
-            android:id="@+id/menu_add"
+            android:id="@+id/menu_load_list"
             android:icon="@drawable/custom_add_grey"
-            android:orderInCategory="1"
-            android:title="@string/add_items"
+            android:orderInCategory="2"
+            android:title="@string/load_master_list"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/menu_load_po"
+            android:icon="@drawable/custom_add_grey"
+            android:orderInCategory="3"
+            android:title="@string/load_po"
             app:showAsAction="never" />
         <item
-            android:id="@+id/menu_preexport"
+            android:id="@+id/menu_finalize"
             android:icon="@drawable/custom_add_grey"
-            android:orderInCategory="1"
-            android:title="@string/export_results"
+            android:orderInCategory="4"
+            android:title="@string/finalize"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/menu_clear_master"
+            android:icon="@drawable/custom_add_grey"
+            android:orderInCategory="5"
+            android:title="@string/clear_master"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_clear_po"
+            android:icon="@drawable/custom_add_grey"
+            android:orderInCategory="6"
+            android:title="@string/clear_po"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/menu_clear_scan"
+            android:icon="@drawable/custom_add_grey"
+            android:orderInCategory="7"
+            android:title="@string/clear_scan"
             app:showAsAction="never" />
     </group>
 </menu>

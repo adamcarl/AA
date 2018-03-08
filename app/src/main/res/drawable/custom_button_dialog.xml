@@ -1,0 +1,25 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape>
+            <corners android:radius="4dp"/>
+            <padding android:left="15dp" android:top="15dp" android:right="15dp"  android:bottom="15dp"/>
+            <solid android:color="@color/myColorButtonPressed"/>
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape>
+            <corners android:radius="4dp"/>
+            <padding android:left="15dp" android:top="15dp" android:right="15dp"  android:bottom="15dp"/>
+            <solid android:color="@color/myColorButtonPressed"/>
+        </shape>
+    </item>
+
+    <item>
+        <shape>
+            <corners android:radius="4dp"/>
+            <padding android:left="15dp" android:top="15dp" android:right="15dp"  android:bottom="15dp"/>
+            <solid android:color="@color/myColorLoginButton"/>
+        </shape>
+    </item>
+</selector>

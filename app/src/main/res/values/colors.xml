@@ -24,6 +24,11 @@
     <color name="myColorTextWhite">#FFFFFF</color>
     <color name="myColorEditTextDialog">#a8a8a8</color>
     <color name="myColorIconLock">#ffce9c</color>
+    <color name="myColorButtonPressed">#ff6f0f</color>
+    <color name="myColorLoginButton">#ff9c00</color>
+    <color name="myColorEditTextDialogDisable">#7b7b7b</color>
+    <color name="myColorBackgroundWhite">#f1f1f1</color>
+    <color name="myColorDialogBG">#cacaca</color>
 
     <!--For ADD ITEMS-->
     <color name="myColorEditTextInAddItem">#dedede</color>

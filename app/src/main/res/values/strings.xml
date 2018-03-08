@@ -3,4 +3,17 @@
     <string name="add_items">Import and Compare</string>
     <string name="scan_switch">Automatic Scan</string>
     <string name="export_results">Export Results</string>
+    <string name="load_master_list">Load Master List</string>
+    <string name="load_po">Load PO</string>
+    <string name="finalize">Finalize Scanning</string>
+    <string name="clear_master">Clear Master List</string>
+    <string name="clear_po">Clear PO</string>
+    <string name="clear_scan">Clear Data Scan</string>
+    <string name="scan_po_number">PO NUMBER</string>
+    <string name="scan_item_code">ITEM CODE</string>
+    <string name="proceed">PROCEED</string>
+    <string name="cancel">CANCEL</string>
+    <string name="finalize_data">FINALIZE DATA</string>
+    <string name="clear"><u>Clear</u></string>
+    <string name="signature">SIGNATURE</string>
 </resources>

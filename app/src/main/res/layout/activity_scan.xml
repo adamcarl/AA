@@ -16,31 +16,71 @@
             android:background="@color/myColorPrimary"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="25dp">
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/etInputBarCode"
+                    android:id="@+id/etInputPONumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
                     android:background="@drawable/custom_edittext"
                     android:gravity="center_horizontal"
-                    android:hint="SCAN BARCODE"
+                    android:hint="@string/scan_po_number"
                     android:inputType="number"
                     android:textColorHint="@color/myColorAppBarLayout" />
+
+                <EditText
+                    android:id="@+id/etInputItemCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:background="@drawable/custom_edittext"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/scan_item_code"
+                    android:inputType="number"
+                    android:textColorHint="@color/myColorAppBarLayout" />
+
+                <Button
+                    android:id="@+id/btnSearchItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginTop="8dp"
+                    android:text="Submit"
+                    android:textColor="@color/myColorButtonScan" />
             </LinearLayout>
+
+            <!--<LinearLayout-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<EditText-->
+            <!--android:id="@+id/etInputItemCode"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@drawable/custom_edittext"-->
+            <!--android:gravity="center_horizontal"-->
+            <!--android:hint="SCAN ITEM CODE"-->
+            <!--android:inputType="number"-->
+            <!--android:textColorHint="@color/myColorAppBarLayout" />-->
+            <!--</LinearLayout>-->
 
             <View
                 android:id="@+id/dummyView"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginRight="80dp" />
-
 
             <!--<Switch-->
             <!--android:layout_width="wrap_content"-->
@@ -55,7 +95,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:gravity="center"
             android:orientation="vertical">
@@ -65,59 +105,154 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingBottom="25dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="25dp">
-                <!--ICON CONTAINER-->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="18dp">
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                    <ImageView
+                CONTAINER FOR 1ST ROW
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+                    <!--ICON CONTAINER-->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_line_weight_black_48dp"
-                        android:tint="@color/myColorIcon" />
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:layout_marginRight="7dp"
+                            android:src="@drawable/ic_line_weight_black_48dp"
+                            android:tint="@color/myColorIcon" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Description"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="@color/myColorIcon" />
+                    </LinearLayout>
 
                     <TextView
+                        android:id="@+id/txtDesc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Bar code"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/myColorIcon" />
+                        android:layout_marginLeft="32dp"
+                        android:text=""
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/myColorTextFieldOutput" />
+
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtCode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="38dp"
-                    android:text=""
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@color/myColorTextFieldOutput" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingRight="10dp">
+                    <!--ICON CONTAINER-->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingLeft="18dp">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_format_list_numbered_black_48dp"
+                            android:tint="@color/myColorIcon" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:text="Case/Piece"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="@color/myColorIcon" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etCase"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="38dp"
+                        android:inputType="number"
+                        android:text=""
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/myColorTextFieldOutput" />
+
+                    <EditText
+                        android:id="@+id/etPiece"
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="38dp"
+                        android:inputType="number"
+                        android:text=""
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/myColorTextFieldOutput" />
+
+                </LinearLayout>
+
+                <!--CONTAINER FOR 2ND ROW-->
+
+                <View
+                    android:layout_width="280dp"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="110dp"
+                    android:background="@color/myColorIcon"></View>
+
+                <!--CONTAINER FOR 3RD ROW-->
+
+                <!--<LinearLayout-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/myColorIcon"-->
+                <!--android:padding="25dp"-->
+                <!--android:gravity="center">-->
+
+                <!--<Button-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/custom_button_add"-->
+                <!--android:text="+ ADD RECORD"-->
+                <!--android:textStyle="bold"-->
+                <!--android:textColor="#f1f1f1"-->
+                <!--android:id="@+id/btnAdd"/>-->
+                <!--</LinearLayout>-->
             </LinearLayout>
 
-            <View
-                android:layout_width="280dp"
-                android:layout_height="1dp"
-                android:layout_marginLeft="110dp"
-                android:background="@color/myColorIcon"></View>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear" />
+
+                <Button
+                    android:id="@+id/btn_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit" />
+            </LinearLayout>
 
             <!--CONTAINER FOR 2ND ROW-->
-
-            <View
-                android:layout_width="280dp"
-                android:layout_height="1dp"
-                android:layout_marginLeft="110dp"
-                android:background="@color/myColorIcon"></View>
 
             <!--CONTAINER FOR 3RD ROW-->
 
@@ -139,6 +274,7 @@
             <!--android:id="@+id/btnAdd"/>-->
             <!--</LinearLayout>-->
         </LinearLayout>
+
     </LinearLayout>
 
 
