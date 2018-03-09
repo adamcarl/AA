@@ -34,7 +34,7 @@
             android:background="@drawable/custom_edittext_dialog"
             android:elevation="2dp"
             android:hint="Name"
-            android:inputType="textPersonName"
+            android:inputType="textCapWords"
             android:textColor="@color/myColorEditTextDialogDisable"
             android:textColorHint="@color/myColorDialogBG" />
 

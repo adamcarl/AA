@@ -40,4 +40,6 @@ interface Constants extends BaseColumns {
             + COLUMN_DATA_CASE + " INTEGER NOT NULL, "
             + COLUMN_DATA_PIECE + " INTEGER NOT NULL);";
 
+    //public static String SERVER_IP = "192.168.137.142"; //10.0.0.112 Abztrak //Ahuehuehue 192.168.137.5 //WagKumonnect 192.168.137.142 //OCI_ap_5 192.168.137.2
+    int SERVER_PORT= 8998;
 }

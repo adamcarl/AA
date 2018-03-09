@@ -47,9 +47,9 @@
 
         <!-- </receiver> -->
         <!-- </application> -->
-        <activity android:name=".SignatureActivity"
-            android:screenOrientation="landscape">
-        </activity>
+        <activity
+            android:name=".SignatureActivity"
+            android:screenOrientation="landscape"></activity>
     </application>
 
 </manifest>
