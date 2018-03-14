@@ -1,21 +1,11 @@
 package com.example.sydney.aa;
 
-import android.app.Dialog;
-import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.SQLException;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -24,42 +14,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.StringTokenizer;
 
-import static com.example.sydney.aa.Constants.COLUMN_LIST_CASE;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_CARD;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_CODE;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_DESC;
-import static com.example.sydney.aa.Constants.COLUMN_LIST_PIECE;
-import static com.example.sydney.aa.Constants.COLUMN_PO_CODE;
-import static com.example.sydney.aa.Constants.COLUMN_PO_NUMBER;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_DOCD;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_PONO;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_PONU;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_QUAN;
 import static com.example.sydney.aa.Constants.TABLE_DATA;
 import static com.example.sydney.aa.Constants.TABLE_LIST;
-import static com.example.sydney.aa.Constants.TABLE_PO;
-import static com.example.sydney.aa.R.color.myColorBackgroundWhite;
 import static com.example.sydney.aa.R.layout.activity_scan;
 
 /**
@@ -68,8 +44,8 @@ import static com.example.sydney.aa.R.layout.activity_scan;
 public class Scan extends AppCompatActivity {
 
     Button searchItem, mainSubmit, mainClear;
-    EditText enterNumber, enterCode, quanCase, quanPiece;
-    TextView desc;
+    EditText enterNumber, enterCode, quan;
+    TextView desc, card;
     CoordinatorLayout coordinatorLayout;
     View dummyView;
 
@@ -128,22 +104,22 @@ public class Scan extends AppCompatActivity {
                         enterNumber.setText("");
                         enterCode.setText("");
                         desc.setText("");
+                        card.setText("");
                         enterNumber.setEnabled(true);
                         enterCode.setEnabled(true);
-                        quanCase.setEnabled(false);
-                        quanPiece.setEnabled(false);
+                        quan.setEnabled(false);
                         enterNumber.requestFocus();
                         Snackbar.make(coordinatorLayout, "NOT FOUND", Snackbar.LENGTH_LONG).show();
                     }
 
                     else {
-                        desc.setText(list[1]);
+                        desc.setText(list[0]);
+                        card.setText(list[1]);
                         enterNumber.setEnabled(false);
                         enterCode.setEnabled(false);
                         searchItem.setEnabled(false);
-                        quanCase.setEnabled(true);
-                        quanPiece.setEnabled(true);
-                        quanCase.requestFocus();
+                        quan.setEnabled(true);
+                        quan.requestFocus();
                     }
                 }
                 catch (Exception e){
@@ -169,12 +145,12 @@ public class Scan extends AppCompatActivity {
 
     private void init() {
 
-        desc = (TextView) findViewById(R.id.txtDesc);
+        desc = (TextView) findViewById(R.id.txtDESC);
+        card = (TextView) findViewById(R.id.txtCARD);
 
         enterNumber = (EditText) findViewById(R.id.etInputPONumber);
         enterCode = (EditText) findViewById(R.id.etInputItemCode);
-        quanCase = (EditText) findViewById(R.id.etCase);
-        quanPiece = (EditText) findViewById(R.id.etPiece);
+        quan = (EditText) findViewById(R.id.etCase);
 
         searchItem = (Button) findViewById(R.id.btnSearchItem);
         mainSubmit = (Button) findViewById(R.id.btn_submit);
@@ -204,20 +180,20 @@ public class Scan extends AppCompatActivity {
             case R.id.menu_load_list:
                 importList();
                 return true;
-            case R.id.menu_load_po:
-                importPO();
-                return true;
+//            case R.id.menu_load_po:
+//                importPO();
+//                return true;
             case R.id.menu_finalize:
                 finalizeBaKamo();
                 return true;
             case R.id.menu_clear_master:
                 clearDatabase(1);
                 return true;
-            case R.id.menu_clear_po:
-                clearDatabase(2);
-                return true;
+//            case R.id.menu_clear_po:
+//                clearDatabase(2);
+//                return true;
             case R.id.menu_clear_scan:
-                clearDatabase(3);
+                clearDatabase(2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -245,15 +221,15 @@ public class Scan extends AppCompatActivity {
         }
     }
 
-    public void importPO() {
-        Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-        fileintent.setType("text/csv");
-        try {
-            startActivityForResult(fileintent, 2);
-        } catch (ActivityNotFoundException e) {
-            Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG).show();
-        }
-    }
+    //    public void importPO() {
+//        Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
+//        fileintent.setType("text/csv");
+//        try {
+//            startActivityForResult(fileintent, 2);
+//        } catch (ActivityNotFoundException e) {
+//            Snackbar.make(coordinatorLayout, "No app found for importing the file", Snackbar.LENGTH_LONG).show();
+//        }
+//    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null){
@@ -272,15 +248,22 @@ public class Scan extends AppCompatActivity {
                             String line;
                             while ((line = buffer.readLine()) != null) {
                                 StringTokenizer tokens = new StringTokenizer(line, ",");
+                                String mPono = tokens.nextToken();
+                                String mPonu = tokens.nextToken();
+                                String mDocd = tokens.nextToken();
+                                String mQuan = tokens.nextToken();
                                 String mCode = tokens.nextToken();
                                 String mDesc = tokens.nextToken();
-                                String mQuanCase = tokens.nextToken();
-                                String mQuanPiece = tokens.nextToken();
+                                String mCard = tokens.nextToken();
 
+                                contentValues.put(COLUMN_LIST_PONO, mPono);
+                                contentValues.put(COLUMN_LIST_PONU, mPonu);
+                                contentValues.put(COLUMN_LIST_DOCD, mDocd);
+                                contentValues.put(COLUMN_LIST_QUAN, mQuan);
                                 contentValues.put(COLUMN_LIST_CODE, mCode);
                                 contentValues.put(COLUMN_LIST_DESC, mDesc);
-                                contentValues.put(COLUMN_LIST_CASE, mQuanCase);
-                                contentValues.put(COLUMN_LIST_PIECE, mQuanPiece);
+                                contentValues.put(COLUMN_LIST_CARD, mCard);
+
                                 dbhelper.dbWriter.insert(TABLE_LIST, null, contentValues);
                             }
                             Snackbar.make(coordinatorLayout, "Import successful.", Snackbar.LENGTH_LONG).show();
@@ -293,35 +276,35 @@ public class Scan extends AppCompatActivity {
                     ex.printStackTrace();
                 }
                 break;
-            case 2:
-                String filePO = data.getData().getPath();
-                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
-                try {
-                    if (resultCode == RESULT_OK) {
-                        try {
-                            FileReader file = new FileReader(filePO);
-                            BufferedReader buffer = new BufferedReader(file);
-                            ContentValues contentValues = new ContentValues();
-                            String line;
-                            while ((line = buffer.readLine()) != null) {
-                                StringTokenizer tokens = new StringTokenizer(line, ",");
-                                String mNumber = tokens.nextToken();
-                                String mCode = tokens.nextToken();
-
-                                contentValues.put(COLUMN_PO_NUMBER, mNumber);
-                                contentValues.put(COLUMN_PO_CODE, mCode);
-                                dbhelper.dbWriter.insert(TABLE_PO, null, contentValues);
-                            }
-                            Snackbar.make(coordinatorLayout, "Import successful.", Snackbar.LENGTH_LONG).show();
-                        } catch (SQLException e) {
-                            Log.e("Error",e.getMessage());
-                        }
-                    }
-                } catch (Exception ex) {
-                    Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG).show();
-                    ex.printStackTrace();
-                }
-                break;
+//            case 2:
+//                String filePO = data.getData().getPath();
+//                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
+//                try {
+//                    if (resultCode == RESULT_OK) {
+//                        try {
+//                            FileReader file = new FileReader(filePO);
+//                            BufferedReader buffer = new BufferedReader(file);
+//                            ContentValues contentValues = new ContentValues();
+//                            String line;
+//                            while ((line = buffer.readLine()) != null) {
+//                                StringTokenizer tokens = new StringTokenizer(line, ",");
+//                                String mNumber = tokens.nextToken();
+//                                String mCode = tokens.nextToken();
+//
+//                                contentValues.put(COLUMN_PO_NUMBER, mNumber);
+//                                contentValues.put(COLUMN_PO_CODE, mCode);
+//                                dbhelper.dbWriter.insert(TABLE_PO, null, contentValues);
+//                            }
+//                            Snackbar.make(coordinatorLayout, "Import successful.", Snackbar.LENGTH_LONG).show();
+//                        } catch (SQLException e) {
+//                            Log.e("Error",e.getMessage());
+//                        }
+//                    }
+//                } catch (Exception ex) {
+//                    Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG).show();
+//                    ex.printStackTrace();
+//                }
+//                break;
         }
     }
 
@@ -339,19 +322,19 @@ public class Scan extends AppCompatActivity {
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
                 break;
+//            case 2:
+//                new AlertDialog.Builder(this)
+//                        .setTitle("Clear PO")
+//                        .setMessage("Do you really want to clear PO?")
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
+//                                Snackbar.make(coordinatorLayout, "PO cleared", Snackbar.LENGTH_LONG).show();
+//                            }})
+//                        .setNegativeButton(android.R.string.no, null).show();
+//                break;
             case 2:
-                new AlertDialog.Builder(this)
-                        .setTitle("Clear PO")
-                        .setMessage("Do you really want to clear PO?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dbhelper.dbWriter.execSQL("delete from " + TABLE_PO);
-                                Snackbar.make(coordinatorLayout, "PO cleared", Snackbar.LENGTH_LONG).show();
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
-                break;
-            case 3:
                 new AlertDialog.Builder(this)
                         .setTitle("Clear Data Scan")
                         .setMessage("Do you really want to clear Data Scan?")
@@ -382,20 +365,15 @@ public class Scan extends AppCompatActivity {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        int mCase, mPiece;
+                        int mQuan;
 
-                        if(quanCase.getText().toString().trim().equals(""))
-                            mCase = 0;
+                        if (quan.getText().toString().trim().equals(""))
+                            mQuan = 0;
                         else
-                            mCase = Integer.parseInt(quanCase.getText().toString().trim());
-
-                        if(quanPiece.getText().toString().trim().equals(""))
-                            mPiece = 0;
-                        else
-                            mPiece = Integer.parseInt(quanPiece.getText().toString().trim());
+                            mQuan = Integer.parseInt(quan.getText().toString().trim());
 
                         int result = dbhelper.insertItem(enterNumber.getText().toString().trim(),
-                                enterCode.getText().toString().trim(), mCase, mPiece);
+                                enterCode.getText().toString().trim(), mQuan);
 
                         if (result==1)
                             Snackbar.make(coordinatorLayout, "Added new item", Snackbar.LENGTH_LONG).show();
@@ -413,13 +391,12 @@ public class Scan extends AppCompatActivity {
                         enterNumber.setText("");
                         enterCode.setText("");
                         desc.setText("");
-                        quanCase.setText("");
-                        quanPiece.setText("");
+                        card.setText("");
+                        quan.setText("");
                         enterNumber.setEnabled(true);
                         enterCode.setEnabled(true);
                         searchItem.setEnabled(true);
-                        quanCase.setEnabled(false);
-                        quanPiece.setEnabled(false);
+                        quan.setEnabled(false);
                         enterNumber.requestFocus();
 
                     }})
@@ -467,13 +444,12 @@ public class Scan extends AppCompatActivity {
                         enterNumber.setText("");
                         enterCode.setText("");
                         desc.setText("");
-                        quanCase.setText("");
-                        quanPiece.setText("");
+                        card.setText("");
+                        quan.setText("");
                         enterNumber.setEnabled(true);
                         enterCode.setEnabled(true);
                         searchItem.setEnabled(true);
-                        quanCase.setEnabled(false);
-                        quanPiece.setEnabled(false);
+                        quan.setEnabled(false);
                         enterNumber.requestFocus();
 
                         Snackbar.make(coordinatorLayout, "Cleared", Snackbar.LENGTH_LONG).show();

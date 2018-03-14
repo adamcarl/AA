@@ -6,25 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import static android.provider.BaseColumns._ID;
-import static com.example.sydney.aa.Constants.COLUMN_DATA_CASE;
 import static com.example.sydney.aa.Constants.COLUMN_DATA_CODE;
-import static com.example.sydney.aa.Constants.COLUMN_DATA_NUMBER;
-import static com.example.sydney.aa.Constants.COLUMN_DATA_PIECE;
-import static com.example.sydney.aa.Constants.COLUMN_LIST_CASE;
+import static com.example.sydney.aa.Constants.COLUMN_DATA_PONU;
+import static com.example.sydney.aa.Constants.COLUMN_DATA_QUAN;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_CODE;
-import static com.example.sydney.aa.Constants.COLUMN_LIST_PIECE;
-import static com.example.sydney.aa.Constants.COLUMN_PO_CODE;
-import static com.example.sydney.aa.Constants.COLUMN_PO_NUMBER;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_PONU;
+import static com.example.sydney.aa.Constants.COLUMN_LIST_QUAN;
 import static com.example.sydney.aa.Constants.CREATE_TABLE_DATA;
 import static com.example.sydney.aa.Constants.CREATE_TABLE_LIST;
-import static com.example.sydney.aa.Constants.CREATE_TABLE_PO;
 import static com.example.sydney.aa.Constants.TABLE_DATA;
 import static com.example.sydney.aa.Constants.TABLE_LIST;
-import static com.example.sydney.aa.Constants.TABLE_PO;
 
 /**
  * Created by PROGRAMMER2 on 5/2/2017.
@@ -43,15 +34,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase arg0) {
-        arg0.execSQL(CREATE_TABLE_PO);
+//        arg0.execSQL(CREATE_TABLE_PO);
         arg0.execSQL(CREATE_TABLE_LIST);
         arg0.execSQL(CREATE_TABLE_DATA);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase arg0, int i, int i1) {
-        arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_PO);
-        onCreate(arg0);
+//        arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_PO);
+//        onCreate(arg0);
         arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_LIST);
         onCreate(arg0);
         arg0.execSQL("DROP TABLE IF EXISTS " + TABLE_DATA);
@@ -67,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //ADD ITEM
-    int insertItem(String mPO, String mCode,int mQuanCase,int mQuanPiece){
+    int insertItem(String pPO, String pCode, int pQuan) {
 
         //Return legends
         //1 = New item added.
@@ -76,41 +67,35 @@ public class DBHelper extends SQLiteOpenHelper {
         //5 = Failed to update quantity.
         //6 = Unknown Database error.
         //7 = Failed to add item.
-        String[] selectionArgs = new String[]{mPO, mCode};
+        String[] selectionArgs = new String[]{pPO, pCode};
         try {
             Cursor cursor = dbReader.rawQuery("SELECT COUNT(*) FROM " + TABLE_DATA+ " WHERE " +
-                    COLUMN_DATA_NUMBER + "=? AND " + COLUMN_DATA_CODE + "=?", selectionArgs);
+                    COLUMN_DATA_PONU + "=? AND " + COLUMN_DATA_CODE + "=?", selectionArgs);
             cursor.moveToFirst();
             int mCount = cursor.getInt(0);
             cursor.close();
 
             if (mCount!=0){
-                Cursor cursor1 = dbReader.rawQuery("SELECT SUM(" + COLUMN_DATA_CASE + "), SUM(" +
-                        COLUMN_DATA_PIECE + ") FROM " + TABLE_DATA + " WHERE " + COLUMN_DATA_CODE +
-                        "=?",new String[]{mCode});
+                Cursor cursor1 = dbReader.rawQuery("SELECT " + COLUMN_DATA_QUAN + " FROM " +
+                        TABLE_DATA + " WHERE " + COLUMN_DATA_PONU +
+                        "=? AND " + COLUMN_DATA_CODE + "=?", selectionArgs);
                 cursor1.moveToFirst();
-                int[] list = {cursor1.getInt(0),cursor1.getInt(1)};
+                int mSum = cursor1.getInt(0) + pQuan;
                 cursor1.close();
-                int mCase = mQuanCase + list[0];
-                int mPiece = mQuanPiece + list[1];
 
-                Cursor cursor2 = dbReader.rawQuery("SELECT " + COLUMN_LIST_CASE +
-                        "," + COLUMN_LIST_PIECE + " FROM " + TABLE_LIST + " WHERE " +
-                        COLUMN_LIST_CODE + "=?",new String[]{mCode});
+                Cursor cursor2 = dbReader.rawQuery("SELECT " + COLUMN_LIST_QUAN + " FROM " +
+                        TABLE_LIST + " WHERE " + COLUMN_LIST_PONU +
+                        "=? AND " + COLUMN_LIST_CODE + "=?", selectionArgs);
                 cursor2.moveToFirst();
-                int[] mSum = {cursor2.getInt(0),cursor2.getInt(1)};
+                int mQuan = cursor2.getInt(0);
                 cursor2.close();
 
-                if(mCase<=mSum[0] && mPiece<=mSum[1]){
+                if (mQuan >= mSum) {
                     try{
-                        String mWHERE = COLUMN_DATA_NUMBER + " = ? AND " + COLUMN_DATA_CODE +
-                                " = ?";
-                        String[] mWHERE_ARGS = new String[]{mPO,mCode};
+                        String mWHERE = COLUMN_DATA_PONU + " = ? AND " + COLUMN_DATA_CODE + "=?";
+                        String[] mWHERE_ARGS = new String[]{pPO, pCode};
                         ContentValues values = new ContentValues();
-
-                        values.put(COLUMN_DATA_CASE, mCase);
-                        values.put(COLUMN_DATA_PIECE, mPiece);
-
+                        values.put(COLUMN_DATA_QUAN, mSum);
                         dbWriter.update(TABLE_DATA, values, mWHERE, mWHERE_ARGS);
                     }
                     catch (Exception e){
@@ -125,28 +110,24 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             else {
                 try{
-                    Cursor cursor1 = dbReader.rawQuery("SELECT SUM(" + COLUMN_LIST_CASE +
-                            "), SUM(" + COLUMN_LIST_PIECE + ") FROM " + TABLE_LIST + " WHERE " +
-                            COLUMN_LIST_CODE + "=?",new String[]{mCode});
+                    Cursor cursor1 = dbReader.rawQuery("SELECT " + COLUMN_LIST_QUAN + " FROM " +
+                            TABLE_LIST + " WHERE " + COLUMN_LIST_PONU + "=? AND " +
+                            COLUMN_LIST_CODE + "=?", selectionArgs);
                     cursor1.moveToFirst();
-                    int[] list = {cursor1.getInt(0),cursor1.getInt(1)};
+                    int mQuan = cursor1.getInt(0);
                     cursor1.close();
 
-                    if(mQuanCase<=list[0] && mQuanCase<=list[1]){
+                    if (mQuan >= pQuan) {
                         ContentValues values = new ContentValues();
-
-                        values.put(COLUMN_DATA_NUMBER, mPO);
-                        values.put(COLUMN_DATA_CODE, mCode);
-                        values.put(COLUMN_DATA_CASE, mQuanCase);
-                        values.put(COLUMN_DATA_PIECE, mQuanPiece);
-
+                        values.put(COLUMN_DATA_PONU, pPO);
+                        values.put(COLUMN_DATA_CODE, pCode);
+                        values.put(COLUMN_DATA_QUAN, pQuan);
                         dbWriter.insert(TABLE_DATA, null, values);
                         return 1;
                     }
                     else {
                         return 3;
                     }
-
                 }catch (Exception e){
                     e.printStackTrace();
                     return 7;
@@ -159,21 +140,20 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //SEARCH AFTER SCAN ITEM
-    String[] searchForItem(String mNumber, String mCode) {
-        String[] selectionArgs = new String[]{ mNumber, mCode };
+    String[] searchForItem(String pPO, String pCode) {
+        String[] selectionArgs = new String[]{pPO, pCode};
         try {
-            Cursor cursor = dbReader.rawQuery("SELECT COUNT(*) FROM " + TABLE_PO + " WHERE " +
-                    COLUMN_PO_NUMBER + "=? AND " + COLUMN_PO_CODE + "=?", selectionArgs);
+            Cursor cursor = dbReader.rawQuery("SELECT COUNT(*) FROM " + TABLE_LIST + " WHERE " +
+                    COLUMN_LIST_PONU + "=? AND " + COLUMN_LIST_CODE + "=?", selectionArgs);
             cursor.moveToFirst();
             int mCount = cursor.getInt(0);
             cursor.close();
 
             if (mCount!=0){
                 Cursor cursor1 = dbReader.rawQuery("SELECT * FROM " + TABLE_LIST + " WHERE " +
-                        COLUMN_LIST_CODE + "=?", new String[]{mCode});
+                        COLUMN_LIST_PONU + "=? AND " + COLUMN_LIST_CODE + "=?", selectionArgs);
                 cursor1.moveToFirst();
-                String[] list = {cursor1.getString(1),cursor1.getString(2),cursor1.getString(3),
-                        cursor1.getString(4)};
+                String[] list = {cursor1.getString(6), cursor1.getString(7)};
                 cursor1.close();
                 return list;
             }
@@ -206,8 +186,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
     Cursor exportAllItems() {
-        String rawBaKamo = "SELECT " + COLUMN_DATA_NUMBER + ","+ COLUMN_DATA_CODE+ ","+
-                COLUMN_DATA_CASE+ ","+ COLUMN_DATA_PIECE+ " FROM " + TABLE_DATA;
+        String rawBaKamo = "SELECT " + COLUMN_DATA_PONU + "," + COLUMN_DATA_CODE + "," +
+                COLUMN_DATA_QUAN + " FROM " + TABLE_DATA;
         return queryDataRead(rawBaKamo);
     }
 
