@@ -2,8 +2,10 @@ package com.example.sydney.aa;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,9 +21,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -91,6 +95,10 @@ public class Scan extends AppCompatActivity {
         setContentView(activity_scan);
         init();
         dbhelper = new DBHelper(this);
+
+//        ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE))
+//                .showInputMethodPicker();
+//        Toast.makeText(this, "Barcode Scanner detected. Please turn OFF Hardware keyboard.", Toast.LENGTH_LONG).show();
 
         searchItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -209,8 +217,18 @@ public class Scan extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
     }
-    //IMPORTING FILE
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .showInputMethodPicker();
+            Toast.makeText(this, "Barcode Scanner detected. Please turn OFF Hardware keyboard.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //IMPORTING FILE
     public void importList() {
         Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
         fileintent.setType("text/csv");
@@ -248,6 +266,10 @@ public class Scan extends AppCompatActivity {
                             String line;
                             while ((line = buffer.readLine()) != null) {
                                 StringTokenizer tokens = new StringTokenizer(line, ",");
+//                                String mData[] = new String[]{};
+//                                while(tokens.hasMoreTokens()){
+//                                    Log.i("Token",tokens.nextToken());
+//                                }
                                 String mPono = tokens.nextToken();
                                 String mPonu = tokens.nextToken();
                                 String mDocd = tokens.nextToken();

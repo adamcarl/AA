@@ -16,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         //SCAN ACTIVITY
-        <activity android:name=".Scan">
+        <activity
+            android:name=".Scan"
+            android:configChanges="keyboard|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

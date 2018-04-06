@@ -111,7 +111,7 @@ public class SignatureActivity extends AppCompatActivity {
             csvWrite.writeNext(new String[]{mName});
             curSV.moveToFirst();
             while (!curSV.isAfterLast()) {
-                String arrStr[] = {curSV.getString(0), curSV.getString(1), curSV.getString(2), curSV.getString(3)};
+                String arrStr[] = {curSV.getString(0), curSV.getString(1), curSV.getString(2)};
                 csvWrite.writeNext(arrStr);
                 curSV.moveToNext();
             }
