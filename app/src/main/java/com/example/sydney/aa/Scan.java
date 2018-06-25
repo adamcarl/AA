@@ -29,13 +29,11 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.StringTokenizer;
 
 import static com.example.sydney.aa.Constants.COLUMN_LIST_CARD;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_CODE;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_DESC;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_DOCD;
-import static com.example.sydney.aa.Constants.COLUMN_LIST_PONO;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_PONU;
 import static com.example.sydney.aa.Constants.COLUMN_LIST_QUAN;
 import static com.example.sydney.aa.Constants.TABLE_DATA;
@@ -71,7 +69,7 @@ public class Scan extends AppCompatActivity {
 //
 //                        enterNumber.postDelayed(new Runnable() {
 //                            @Override
-//                            public void run() {
+//                            public void   run() {
 ////                                enterNumber.requestFocus();
 ////                                code.setText("");
 ////                                quantity.setText("");
@@ -265,20 +263,39 @@ public class Scan extends AppCompatActivity {
                             ContentValues contentValues = new ContentValues();
                             String line;
                             while ((line = buffer.readLine()) != null) {
-                                StringTokenizer tokens = new StringTokenizer(line, ",");
+//                                StringTokenizer tokens = new StringTokenizer(line, ",");
+                                String[] columns = line.split(",");
 //                                String mData[] = new String[]{};
 //                                while(tokens.hasMoreTokens()){
 //                                    Log.i("Token",tokens.nextToken());
 //                                }
-                                String mPono = tokens.nextToken();
-                                String mPonu = tokens.nextToken();
-                                String mDocd = tokens.nextToken();
-                                String mQuan = tokens.nextToken();
-                                String mCode = tokens.nextToken();
-                                String mDesc = tokens.nextToken();
-                                String mCard = tokens.nextToken();
+//                                String mPono = tokens.nextToken();
+//                                tokens.nextToken();
+//                                String mPonu = tokens.nextToken();
+//                                tokens.nextToken();
+//                                String mCard = tokens.nextToken();
+//                                tokens.nextToken();
+//                                String mCode = tokens.nextToken();
+//                                tokens.nextToken();
+//                                tokens.nextToken();
+//                                tokens.nextToken();
+//                                String mDesc = tokens.nextToken();
+//                                tokens.nextToken();
+//                                tokens.nextToken();
+//                                String mQuan = tokens.nextToken();
+//                                for(int a=0; a<141;a++){
+//                                    tokens.nextToken();
+//                                }
+//                                String mDocd = tokens.nextToken();
 
-                                contentValues.put(COLUMN_LIST_PONO, mPono);
+                                String mPonu = columns[1];
+                                String mCard = columns[3];
+                                String mCode = columns[5];
+                                String mDesc = columns[9];
+                                String mQuan = columns[12];
+                                String mDocd = columns[152];
+
+//                                contentValues.put(COLUMN_LIST_PONO, mPono);
                                 contentValues.put(COLUMN_LIST_PONU, mPonu);
                                 contentValues.put(COLUMN_LIST_DOCD, mDocd);
                                 contentValues.put(COLUMN_LIST_QUAN, mQuan);
@@ -296,6 +313,7 @@ public class Scan extends AppCompatActivity {
                 } catch (Exception ex) {
                     Snackbar.make(coordinatorLayout, "Failed Import File", Snackbar.LENGTH_LONG).show();
                     ex.printStackTrace();
+                    Log.e("Import", ex.getMessage());
                 }
                 break;
 //            case 2:

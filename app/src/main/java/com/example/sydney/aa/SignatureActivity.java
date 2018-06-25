@@ -117,7 +117,7 @@ public class SignatureActivity extends AppCompatActivity {
             }
             csvWrite.close();
             curSV.close();
-            Toast.makeText(SignatureActivity.this, "Finalize Complete", Toast.LENGTH_SHORT);
+            Toast.makeText(SignatureActivity.this, "Finalize Complete", Toast.LENGTH_SHORT).show();
         } catch (Exception sqlEx) {
             Log.e("Scan", sqlEx.getMessage(), sqlEx);
         }
